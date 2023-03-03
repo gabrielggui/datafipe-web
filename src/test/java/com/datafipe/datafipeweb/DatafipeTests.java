@@ -2,20 +2,14 @@ package com.datafipe.datafipeweb;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HTTP;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import com.google.gson.reflect.TypeToken;
 import com.datafipe.datafipeweb.model.Marca;
@@ -23,6 +17,8 @@ import com.datafipe.datafipeweb.model.MesReferencia;
 import com.datafipe.datafipeweb.model.TipoVeiculo;
 import com.datafipe.datafipeweb.model.enums.TipoVeiculoEnum;
 import com.datafipe.datafipeweb.repository.MarcaRepository;
+import com.datafipe.datafipeweb.repository.MesReferenciaRepository;
+import com.datafipe.datafipeweb.service.consultaApiFipeService;
 import com.google.gson.Gson;
 
 @SpringBootTest
@@ -31,82 +27,66 @@ class DatafipeTests {
 	@Autowired
 	private MarcaRepository marcaRepository;
 
-	String jsonStringResposta;
+	@Autowired
+	private MesReferenciaRepository mesReferenciaRepository;
+
+	@Autowired
+	private consultaApiFipeService consultaApiFipeService;
 
 	@Test
-	void conexaoApiFipe() {
+	void salvarTabelaDeReferencia() {
 
-		try {
-			// URL da API externa que retorna JSON
-			String url = "https://veiculos.fipe.org.br/api/veiculos/ConsultarMarcas";
+		Map<String, String> parametros = new HashMap<>();
 
-			// Cria um objeto HttpClient
-			HttpClient httpClient = HttpClientBuilder.create().build();
+		String jsonStringResposta = consultaApiFipeService.consultarAPI("ConsultarTabelaDeReferencia", parametros);
+		// Analisa a string JSON usando a biblioteca Gson
+		Gson gson = new Gson();
+		Type listType = new TypeToken<List<MesReferencia>>() {
+		}.getType();
+		List<MesReferencia> meses = gson.fromJson(jsonStringResposta, listType);
 
-			// Cria uma requisição HTTP POST para a URL
-			HttpPost requisicao = new HttpPost(url);
+		mesReferenciaRepository.saveAll(meses);
 
-			// Define a string JSON que você quer enviar como parâmetro da requisição
-			String jsonString = "{\"codigoTabelaReferencia\":\"293\",\"codigoTipoVeiculo\":1}";
+	}
 
-			// Cria um objeto StringEntity com a string JSON como argumento
-			StringEntity entity = new StringEntity(jsonString);
+	@Test
+	void salvarMarcas() {
 
-			// Configura o objeto HttpPost para usar a StringEntity como entidade da
-			// requisição
-			requisicao.setEntity(entity);
+		Iterable<MesReferencia> mesesReferencia = mesReferenciaRepository.findAllOrderByIdDesc();
+		List<Marca> marcas = new ArrayList<>();
 
-			// Configura o cabeçalho da requisição para indicar que a entidade é do tipo
-			// JSON
-			requisicao.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+		for (Marca marca : marcaRepository.findAll())
+			marcas.add(marca);
 
-			// Executa a requisição e lê a resposta HTTP
-			HttpResponse resposta = httpClient.execute(requisicao);
-			// Faça algo com a resposta...InputStream conteudo =
-			// resposta.getEntity().getContent();
-			InputStream conteudo = resposta.getEntity().getContent();
+		for (MesReferencia mesReferencia : mesesReferencia) {
+			Map<String, String> parametros = new HashMap<>();
 
-			// Converte o InputStream em uma string
-			BufferedReader reader = new BufferedReader(new InputStreamReader(conteudo));
-			StringBuilder builder = new StringBuilder();
-			String linha;
-			while ((linha = reader.readLine()) != null) {
-				builder.append(linha);
+			parametros.put("codigoTabelaReferencia", mesReferencia.getId().toString());
+			parametros.put("codigoTipoVeiculo", "1");
+
+			String jsonStringResposta = consultaApiFipeService.consultarAPI("ConsultarMarcas", parametros);
+
+			// Analisa a string JSON usando a biblioteca Gson
+			Gson gson = new Gson();
+			Type listType = new TypeToken<List<Marca>>() {
+			}.getType();
+			List<Marca> marcasFromApi = gson.fromJson(jsonStringResposta, listType);
+
+			TipoVeiculo tipoVeiculo = new TipoVeiculo();
+			tipoVeiculo.setId(TipoVeiculoEnum.CARRO.ordinal() + 1L);
+			tipoVeiculo.setTipoVeiculo(TipoVeiculoEnum.CARRO);
+
+			for (Marca marcaFromApi : marcasFromApi) {
+				if (!marcas.contains(marcaFromApi)) {
+					marcaFromApi.getMesReferencias().add(mesReferencia);
+					
+					marcas.add(marcaFromApi);
+				} else {
+					marcas.get(marcas.indexOf(marcaFromApi)).getMesReferencias().add(mesReferencia);
+				}
 			}
-
-			jsonStringResposta = builder.toString();
-
-		} catch (IOException e) {
-			e.printStackTrace();
+			marcaRepository.saveAll(marcas);
 		}
 
 	}
-
-	@Test
-	void salvarDados() {
-		conexaoApiFipe();
-
-		// Analisa a string JSON usando a biblioteca Gson
-		Gson gson = new Gson();
-		Type listType = new TypeToken<List<Marca>>() {
-		}.getType();
-		List<Marca> marcas = gson.fromJson(jsonStringResposta, listType);
-
-		MesReferencia mesReferencia = new MesReferencia();
-		mesReferencia.setId(295L);
-		mesReferencia.setMes("março");
-		mesReferencia.setAno("2023");
-
-		TipoVeiculo tipoVeiculo = new TipoVeiculo();
-		tipoVeiculo.setId(TipoVeiculoEnum.CARRO.ordinal()+1L);
-		tipoVeiculo.setTipoVeiculo(TipoVeiculoEnum.CARRO);
-		
-		marcas.forEach(marca -> {
-			marca.getMesReferencias().add(mesReferencia);
-			marca.setTipoVeiculo(tipoVeiculo);
-		});
-
-		marcaRepository.saveAll(marcas);
-	}
-
 }

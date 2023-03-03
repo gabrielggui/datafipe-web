@@ -4,17 +4,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.google.gson.annotations.SerializedName;
+
 @Entity
 public class MesReferencia {
 
     @Id
+    @SerializedName("Codigo")
     private Long id;
 
-    @Column(length = 11, nullable = false)
+    @Column(length = 20, nullable = false)
+    @SerializedName("Mes")
     private String mes;
-
-    @Column(length = 4, nullable = false)
-    private String ano;
 
     public Long getId() {
         return this.id;
@@ -30,13 +31,5 @@ public class MesReferencia {
 
     public void setMes(String mes) {
         this.mes = mes;
-    }
-
-    public String getAno() {
-        return this.ano;
-    }
-
-    public void setAno(String ano) {
-        this.ano = ano;
     }
 }

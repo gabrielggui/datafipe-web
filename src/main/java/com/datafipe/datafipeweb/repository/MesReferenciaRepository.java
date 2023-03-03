@@ -4,12 +4,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import com.datafipe.datafipeweb.model.Marca;
+
+import com.datafipe.datafipeweb.model.MesReferencia;
 
 @Repository
 @Transactional
-public interface MarcaRepository extends CrudRepository<Marca, Long> {
+public interface MesReferenciaRepository extends CrudRepository<MesReferencia, Long>{
 
-    @Query("select m from Marca m order by m.id desc")
-    public Iterable<Marca> findAllOrderByIdAsc();
+    @Query("select m from MesReferencia m order by m.id desc")
+    public Iterable<MesReferencia> findAllOrderByIdDesc();
 }
