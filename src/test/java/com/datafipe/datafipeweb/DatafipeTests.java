@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -18,6 +19,9 @@ import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.google.gson.reflect.TypeToken;
 import com.datafipe.datafipeweb.model.Marca;
+import com.datafipe.datafipeweb.model.MesReferencia;
+import com.datafipe.datafipeweb.model.TipoVeiculo;
+import com.datafipe.datafipeweb.model.enums.TipoVeiculoEnum;
 import com.datafipe.datafipeweb.repository.MarcaRepository;
 import com.google.gson.Gson;
 
@@ -87,6 +91,20 @@ class DatafipeTests {
 		Type listType = new TypeToken<List<Marca>>() {
 		}.getType();
 		List<Marca> marcas = gson.fromJson(jsonStringResposta, listType);
+
+		MesReferencia mesReferencia = new MesReferencia();
+		mesReferencia.setId(295L);
+		mesReferencia.setMes("março");
+		mesReferencia.setAno("2023");
+
+		TipoVeiculo tipoVeiculo = new TipoVeiculo();
+		tipoVeiculo.setId(TipoVeiculoEnum.CARRO.ordinal()+1L);
+		tipoVeiculo.setTipoVeiculo(TipoVeiculoEnum.CARRO);
+		
+		marcas.forEach(marca -> {
+			marca.getMesReferencias().add(mesReferencia);
+			marca.setTipoVeiculo(tipoVeiculo);
+		});
 
 		marcaRepository.saveAll(marcas);
 	}

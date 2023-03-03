@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 
 import com.datafipe.datafipeweb.model.enums.TipoVeiculoEnum;
 
@@ -16,9 +15,6 @@ public class TipoVeiculo {
 
     @Enumerated(EnumType.STRING)
     private TipoVeiculoEnum tipoVeiculo;
-
-    @OneToOne(mappedBy = "tipoVeiculo")
-    private Marca marca;
 
     public Long getId() {
         return this.id;

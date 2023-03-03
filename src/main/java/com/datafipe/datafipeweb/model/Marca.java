@@ -7,10 +7,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.SerializedName;
 
 @Entity
@@ -24,13 +26,19 @@ public class Marca {
     @SerializedName("Label")
     @Column(nullable = false)
     private String nomeMarca;
-    
-    @JsonIgnore
-    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
+
+    @ManyToOne(cascade = CascadeType.ALL)
     private TipoVeiculo tipoVeiculo;
 
-    @OneToMany(mappedBy = "marca", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "marca")
     private List<ModeloVeiculo> ModeloVeiculo = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+        name="marcas_mes_referencia",
+        joinColumns = @JoinColumn(name = "marca_id"),
+        inverseJoinColumns = @JoinColumn(name = "mes_referencia_id"))
+    private List<MesReferencia> mesReferencias = new ArrayList<>();
 
     public Long getId() {
         return this.id;
@@ -48,4 +56,27 @@ public class Marca {
         this.nomeMarca = nomeMarca;
     }
 
+    public TipoVeiculo getTipoVeiculo() {
+        return this.tipoVeiculo;
+    }
+
+    public void setTipoVeiculo(TipoVeiculo tipoVeiculo) {
+        this.tipoVeiculo = tipoVeiculo;
+    }
+
+    public List<ModeloVeiculo> getModeloVeiculo() {
+        return this.ModeloVeiculo;
+    }
+
+    public void setModeloVeiculo(List<ModeloVeiculo> ModeloVeiculo) {
+        this.ModeloVeiculo = ModeloVeiculo;
+    }
+
+    public List<MesReferencia> getMesReferencias() {
+        return this.mesReferencias;
+    }
+
+    public void setMesReferencias(List<MesReferencia> mesReferencias) {
+        this.mesReferencias = mesReferencias;
+    }
 }
