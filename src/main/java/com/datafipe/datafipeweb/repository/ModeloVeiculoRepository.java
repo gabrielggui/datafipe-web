@@ -7,15 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import com.datafipe.datafipeweb.model.Marca;
+
+import com.datafipe.datafipeweb.model.ModeloVeiculo;
 
 @Repository
 @Transactional
-public interface MarcaRepository extends CrudRepository<Marca, Long> {
+public interface ModeloVeiculoRepository extends CrudRepository<ModeloVeiculo, Long> {
+    @Query("select m from ModeloVeiculo m order by m.id desc")
+    public List<ModeloVeiculo> findAllOrderByIdDesc(Pageable pageable);
 
-    @Query("select m from Marca m order by m.id desc")
-    public List<Marca> findAllOrderByIdDesc(Pageable pageable);
-
-    public List<Marca> findAll();
-
+    public List<ModeloVeiculo> findAll();
 }

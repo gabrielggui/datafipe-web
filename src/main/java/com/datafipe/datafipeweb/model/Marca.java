@@ -36,7 +36,7 @@ public class Marca {
 
     @ManyToMany
     @JoinTable(
-        name="marcas_mes_referencia",
+        name="marcas_mesreferencia",
         joinColumns = @JoinColumn(name = "marca_id"),
         inverseJoinColumns = @JoinColumn(name = "mes_referencia_id"))
     private List<MesReferencia> mesReferencias = new ArrayList<>();

@@ -1,5 +1,8 @@
 package com.datafipe.datafipeweb.repository;
 
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -12,5 +15,7 @@ import com.datafipe.datafipeweb.model.MesReferencia;
 public interface MesReferenciaRepository extends CrudRepository<MesReferencia, Long>{
 
     @Query("select m from MesReferencia m order by m.id desc")
-    public Iterable<MesReferencia> findAllOrderByIdDesc();
+    public List<MesReferencia> findAllOrderByIdDesc(Pageable pageable);
+    
+    public List<MesReferencia> findAll();
 }
