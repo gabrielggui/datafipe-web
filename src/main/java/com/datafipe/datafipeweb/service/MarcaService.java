@@ -10,10 +10,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.google.gson.reflect.TypeToken;
+import com.datafipe.datafipeweb.enumeration.TipoVeiculoEnum;
 import com.datafipe.datafipeweb.model.Marca;
 import com.datafipe.datafipeweb.model.MesReferencia;
 import com.datafipe.datafipeweb.model.TipoVeiculo;
-import com.datafipe.datafipeweb.model.enums.TipoVeiculoEnum;
 import com.datafipe.datafipeweb.repository.MarcaRepository;
 import com.datafipe.datafipeweb.repository.MesReferenciaRepository;
 import com.google.gson.Gson;
@@ -32,7 +32,7 @@ public class MarcaService {
 
     public void salvarMarcas() {
 
-        List<MesReferencia> mesesReferencia = mesReferenciaRepository.findAllOrderByIdDesc(PageRequest.of(0, 40));
+        List<MesReferencia> mesesReferencia = mesReferenciaRepository.findAllByOrderByIdDesc(PageRequest.of(0, 40));
         List<Marca> marcas = marcaRepository.findAll();
 
         for (MesReferencia mesReferencia : mesesReferencia) {

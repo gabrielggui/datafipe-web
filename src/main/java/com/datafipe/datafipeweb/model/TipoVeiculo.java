@@ -5,7 +5,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
-import com.datafipe.datafipeweb.model.enums.TipoVeiculoEnum;
+import com.datafipe.datafipeweb.enumeration.TipoVeiculoEnum;
 
 @Entity
 public class TipoVeiculo {

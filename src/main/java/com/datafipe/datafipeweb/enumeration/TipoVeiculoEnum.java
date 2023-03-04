@@ -1,4 +1,4 @@
-package com.datafipe.datafipeweb.model.enums;
+package com.datafipe.datafipeweb.enumeration;
 
 public enum TipoVeiculoEnum {
     CARRO,MOTO,CAMINHÃO

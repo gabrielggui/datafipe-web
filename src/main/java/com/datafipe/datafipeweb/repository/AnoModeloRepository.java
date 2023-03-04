@@ -12,7 +12,13 @@ import com.datafipe.datafipeweb.model.AnoModelo;
 @Repository
 @Transactional
 public interface AnoModeloRepository extends CrudRepository<AnoModelo, String> {
+
+    public List<AnoModelo> findAllByOrderByIdDesc();
+
+    public List<AnoModelo> findAllByOrderByIdDesc(Pageable pageable);
+    
+    public List<AnoModelo> findAll();
+
     public List<AnoModelo> findAll(Pageable pageable);
 
-    public List<AnoModelo> findAll();
 }

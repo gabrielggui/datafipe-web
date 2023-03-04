@@ -3,7 +3,6 @@ package com.datafipe.datafipeweb.repository;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +13,11 @@ import com.datafipe.datafipeweb.model.MesReferencia;
 @Transactional
 public interface MesReferenciaRepository extends CrudRepository<MesReferencia, Long>{
 
-    @Query("select m from MesReferencia m order by m.id desc")
-    public List<MesReferencia> findAllOrderByIdDesc(Pageable pageable);
+    public List<MesReferencia> findAllByOrderByIdDesc();
+
+    public List<MesReferencia> findAllByOrderByIdDesc(Pageable pageable);
     
     public List<MesReferencia> findAll();
+
+    public List<MesReferencia> findAll(Pageable pageable);
 }

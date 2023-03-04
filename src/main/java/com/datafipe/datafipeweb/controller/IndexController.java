@@ -4,17 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.datafipe.datafipeweb.service.MarcaService;
+import com.datafipe.datafipeweb.service.MesReferenciaService;
 
 @Controller
 public class IndexController {
 
     @Autowired
-    private MarcaService marcaService;
+    private MesReferenciaService mesReferenciaService;
 
     @GetMapping("/")
     public String i() {
-        marcaService.salvarMarcas();
+        mesReferenciaService.persistDataFromJsonString(mesReferenciaService.getJsonStringFromApi());
         return "index";
     }
 }
